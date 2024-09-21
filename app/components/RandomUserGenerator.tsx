@@ -35,7 +35,6 @@ const faker = new Faker({ locale: [en] });
 export default function RandomUserGenerator() {
   const [gender, setGender] = useState<'Female' | 'Male'>('Female');
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [copied, setCopied] = useState(false);
   const { darkMode } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -75,14 +74,27 @@ export default function RandomUserGenerator() {
 
   const copyToClipboard = () => {
     if (userInfo) {
-      navigator.clipboard.writeText(JSON.stringify(userInfo, null, 2))
-        .then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        })
-        .catch(err => console.error('Failed to copy: ', err));
+      navigator.clipboard.writeText(JSON.stringify(userInfo, null, 2));
     }
   };
+
+  const selectAllJson = () => {
+    const preElement = document.querySelector('pre');
+    if (preElement) {
+      const range = document.createRange();
+      range.selectNodeContents(preElement);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+  };
+
+  useEffect(() => {
+    if (userInfo) {
+      const { email, passwd } = userInfo;
+      navigator.clipboard.writeText(`${email}:${passwd}`);
+    }
+  }, [userInfo]);
 
   useEffect(() => {
     generateUser();
@@ -107,7 +119,10 @@ export default function RandomUserGenerator() {
           </Select>
         </div>
         <div className="relative mt-4">
-          <pre className={`min-h-[470px] bg-gray-100 p-4 rounded w-full overflow-x-auto border-2 border-gray-600 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+          <pre
+            className={`min-h-[470px] bg-gray-100 p-4 rounded w-full overflow-x-auto border-2 border-gray-600 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}
+            onClick={selectAllJson}
+          >
             {userInfo ? JSON.stringify(userInfo, null, 2) : ''}
           </pre>
           {userInfo && (
@@ -123,18 +138,14 @@ export default function RandomUserGenerator() {
               <button
                 onClick={copyToClipboard}
                 className={`absolute top-2 right-2 p-2 rounded text-sm transition-colors ${darkMode ? 'text-gray-200' : 'text-gray-500'}`}
-                title={copied ? 'Copied!' : 'Copy to clipboard'}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
               </svg>
               </button>
             </div>
-
-
           )}
         </div>
-
       </div>
     </div>
   );
