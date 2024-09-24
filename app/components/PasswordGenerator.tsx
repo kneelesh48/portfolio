@@ -7,10 +7,35 @@ export default function PasswordGenerator() {
   const [password, setPassword] = useState("");
   const [length, setLength] = useState(14);
 
-  const [useLowercase, setUseLowercase] = useState(true);
-  const [useUppercase, setUseUppercase] = useState(true);
-  const [useNumbers, setUseNumbers] = useState(true);
-  const [useSpecial, setUseSpecial] = useState(true);
+  const [useLowercase, setUseLowercase] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('useLowercase');
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
+  const [useUppercase, setUseUppercase] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('useUppercase');
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
+  const [useNumbers, setUseNumbers] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('useNumbers');
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  }); 
+  const [useSpecial, setUseSpecial] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('useSpecial');
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
+
   const checkboxes = [useLowercase, useUppercase, useNumbers, useSpecial];
   let checkedCount = checkboxes.filter(Boolean).length;
 
@@ -57,7 +82,11 @@ export default function PasswordGenerator() {
     setTimeout(() => setCopyMessage(""), 2000);
   };
 
-  const handleCheckboxChange = (setter: React.Dispatch<React.SetStateAction<boolean>>, value: boolean) => {
+  const handleCheckboxChange = (setter: React.Dispatch<React.SetStateAction<boolean>>, value: boolean, checkboxName: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(checkboxName, JSON.stringify(!value));
+    }
+
     checkedCount = checkboxes.filter(Boolean).length;
 
     if (checkedCount === 1 && value) {
@@ -123,7 +152,7 @@ export default function PasswordGenerator() {
               id="uppercase"
               type="checkbox"
               checked={useUppercase}
-              onChange={() => handleCheckboxChange(setUseUppercase, useUppercase)}
+              onChange={() => handleCheckboxChange(setUseUppercase, useUppercase, "useUppercase")}
               className={`mr-2 ${useUppercase && checkedCount === 1 ? "accent-gray-400" : ""}`}
             />
             Uppercase
@@ -133,7 +162,7 @@ export default function PasswordGenerator() {
               id="lowercase"
               type="checkbox"
               checked={useLowercase}
-              onChange={() => handleCheckboxChange(setUseLowercase, useLowercase)}
+              onChange={() => handleCheckboxChange(setUseLowercase, useLowercase, "useLowercase")}
               className={`mr-2 ${useLowercase && checkedCount === 1 ? "accent-gray-400" : ""}`}
             />
             Lowercase
@@ -143,7 +172,7 @@ export default function PasswordGenerator() {
               id="numbers"
               type="checkbox"
               checked={useNumbers}
-              onChange={() => handleCheckboxChange(setUseNumbers, useNumbers)}
+              onChange={() => handleCheckboxChange(setUseNumbers, useNumbers, "useNumbers")}
               className={`mr-2 ${useNumbers && checkedCount === 1 ? "accent-gray-400" : ""}`}
             />
             Numbers
@@ -153,7 +182,7 @@ export default function PasswordGenerator() {
               id="symbols"
               type="checkbox"
               checked={useSpecial}
-              onChange={() => handleCheckboxChange(setUseSpecial, useSpecial)}
+              onChange={() => handleCheckboxChange(setUseSpecial, useSpecial, "useSpecial")}
               className={`mr-2 ${useSpecial && checkedCount === 1 ? "accent-gray-400" : ""}`}
             />
             Symbols
