@@ -24,6 +24,7 @@ export default function Navbar() {
           <Link href="/paypalfeecalculator" className={`${darkMode ? 'text-white hover:text-gray-300' : 'text-gray-800 hover:text-gray-600'}`}>PayPal Fee Calculator</Link>
           <Link href="/passwordgenerator" className={`${darkMode ? 'text-white hover:text-gray-300' : 'text-gray-800 hover:text-gray-600'}`}>Password Generator</Link>
           <Link href="/randomusergenerator" className={`${darkMode ? 'text-white hover:text-gray-300' : 'text-gray-800 hover:text-gray-600'}`}>Random User Generator</Link>
+          <Link href="/ripples" className={`${darkMode ? 'text-white hover:text-gray-300' : 'text-gray-800 hover:text-gray-600'}`}>Ripples</Link>
           <Link href="/snake" className={`${darkMode ? 'text-white hover:text-gray-300' : 'text-gray-800 hover:text-gray-600'}`}>Snake Game</Link>
           <Link href="/tictactoe" className={`${darkMode ? 'text-white hover:text-gray-300' : 'text-gray-800 hover:text-gray-600'}`}>Tic Tac Toe</Link>
         </div>
