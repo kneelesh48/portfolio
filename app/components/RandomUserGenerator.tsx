@@ -42,6 +42,21 @@ export default function RandomUserGenerator() {
     setMounted(true);
   }, []);
 
+  const generatePassword = () => {
+    const length = 14;
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+    const special = "!#$%&*-;<=>?@^_£";
+    const chars = lowercase + uppercase + numbers + special;
+
+    let newPassword = "";
+    for (let i = 0; i < length; i++) {
+      newPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return newPassword;
+  };
+
   const generateUser = () => {
     const firstName = faker.person.firstName(gender.toLowerCase() as 'female' | 'male');
     const lastName = faker.person.lastName();
@@ -49,6 +64,7 @@ export default function RandomUserGenerator() {
     const domains = ["mypostman.site",]
     const randomNumber = faker.number.int({ min: 10, max: 99 });
     const domain = faker.helpers.arrayElement(domains);
+    const newPassword = generatePassword();
 
     const newUserInfo: UserInfo = {
       fname: firstName,
@@ -66,7 +82,7 @@ export default function RandomUserGenerator() {
       state: faker.location.state(),
       zip: faker.location.zipCode('#####'),
       user: `${firstName}${lastName}${randomNumber}`,
-      passwd: faker.internet.password({ length: 10 }),
+      passwd: newPassword,
     };
 
     setUserInfo(newUserInfo);
@@ -78,21 +94,10 @@ export default function RandomUserGenerator() {
     }
   };
 
-  const selectAllJson = () => {
-    const preElement = document.querySelector('pre');
-    if (preElement) {
-      const range = document.createRange();
-      range.selectNodeContents(preElement);
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-    }
-  };
-
   useEffect(() => {
     if (userInfo) {
       const { email, passwd } = userInfo;
-      navigator.clipboard.writeText(`${email}:${passwd}`);
+      navigator.clipboard.writeText(`${email}:${passwd}\n`);
     }
   }, [userInfo]);
 
@@ -119,12 +124,12 @@ export default function RandomUserGenerator() {
           </Select>
         </div>
         <div className="relative mt-4">
-          <pre
+          <textarea
             className={`min-h-[470px] bg-gray-100 p-4 rounded w-full overflow-x-auto border-2 border-gray-600 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}
-            onClick={selectAllJson}
+            value={userInfo ? JSON.stringify(userInfo, null, 2) : ''}
+            readOnly
           >
-            {userInfo ? JSON.stringify(userInfo, null, 2) : ''}
-          </pre>
+          </textarea>
           {userInfo && (
             <div className="flex justify-end">
               <button
