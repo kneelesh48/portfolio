@@ -6,10 +6,14 @@ import { useTheme } from "../context/ThemeContext";
 export default function PasswordGenerator() {
   const [password, setPassword] = useState("");
   const [length, setLength] = useState(14);
+
   const [useLowercase, setUseLowercase] = useState(true);
   const [useUppercase, setUseUppercase] = useState(true);
   const [useNumbers, setUseNumbers] = useState(true);
   const [useSpecial, setUseSpecial] = useState(true);
+  const checkboxes = [useLowercase, useUppercase, useNumbers, useSpecial];
+  let checkedCount = checkboxes.filter(Boolean).length;
+
   const [copyMessage, setCopyMessage] = useState("");
   const { darkMode } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -51,6 +55,16 @@ export default function PasswordGenerator() {
     navigator.clipboard.writeText(password);
     setCopyMessage("Password copied!");
     setTimeout(() => setCopyMessage(""), 2000);
+  };
+
+  const handleCheckboxChange = (setter: React.Dispatch<React.SetStateAction<boolean>>, value: boolean) => {
+    checkedCount = checkboxes.filter(Boolean).length;
+
+    if (checkedCount === 1 && value) {
+      return;
+    }
+
+    setter(!value);
   };
 
   if (!mounted) {
@@ -105,19 +119,43 @@ export default function PasswordGenerator() {
         </div>
         <div className="mb-4 space-y-2">
           <label className="flex items-center">
-            <input id="uppercase" type="checkbox" checked={useUppercase} onChange={() => setUseUppercase(!useUppercase)} className="mr-2" />
+            <input
+              id="uppercase"
+              type="checkbox"
+              checked={useUppercase}
+              onChange={() => handleCheckboxChange(setUseUppercase, useUppercase)}
+              className={`mr-2 ${useUppercase && checkedCount === 1 ? "accent-gray-400" : ""}`}
+            />
             Uppercase
           </label>
           <label className="flex items-center">
-            <input id="lowercase" type="checkbox" checked={useLowercase} onChange={() => setUseLowercase(!useLowercase)} className="mr-2" />
+            <input
+              id="lowercase"
+              type="checkbox"
+              checked={useLowercase}
+              onChange={() => handleCheckboxChange(setUseLowercase, useLowercase)}
+              className={`mr-2 ${useLowercase && checkedCount === 1 ? "accent-gray-400" : ""}`}
+            />
             Lowercase
           </label>
           <label className="flex items-center">
-            <input id="numbers" type="checkbox" checked={useNumbers} onChange={() => setUseNumbers(!useNumbers)} className="mr-2" />
+            <input
+              id="numbers"
+              type="checkbox"
+              checked={useNumbers}
+              onChange={() => handleCheckboxChange(setUseNumbers, useNumbers)}
+              className={`mr-2 ${useNumbers && checkedCount === 1 ? "accent-gray-400" : ""}`}
+            />
             Numbers
           </label>
           <label className="flex items-center">
-            <input id="symbols" type="checkbox" checked={useSpecial} onChange={() => setUseSpecial(!useSpecial)} className="mr-2" />
+            <input
+              id="symbols"
+              type="checkbox"
+              checked={useSpecial}
+              onChange={() => handleCheckboxChange(setUseSpecial, useSpecial)}
+              className={`mr-2 ${useSpecial && checkedCount === 1 ? "accent-gray-400" : ""}`}
+            />
             Symbols
           </label>
         </div>
